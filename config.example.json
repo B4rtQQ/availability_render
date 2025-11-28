@@ -1,0 +1,8 @@
+{
+  "smtp_host": "smtp.example.com",
+  "smtp_port": 587,
+  "use_tls": true,
+  "smtp_user": "twoj_login",
+  "smtp_pass": "twoje_haslo",
+  "from_email": "twoj@adres.pl"
+}
