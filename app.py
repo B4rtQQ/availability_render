@@ -12,7 +12,7 @@ DB = os.environ.get('DB_PATH', 'availability.db')
 def init_db():
     conn = sqlite3.connect(DB)
     c = conn.cursor()
-    c.execute('''
+    c.execute("""
         CREATE TABLE IF NOT EXISTS availability (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             date TEXT NOT NULL,
@@ -20,13 +20,12 @@ def init_db():
             end_time TEXT NOT NULL,
             note TEXT
         )
-    ''')
+    """)
     conn.commit()
     conn.close()
 
-@app.before_first_request
-def _init():
-    init_db()
+# Call init_db() directly (avoid using @app.before_first_request which may not be available)
+init_db()
 
 def get_db():
     conn = sqlite3.connect(DB)
