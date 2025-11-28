@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dyspozycyjność</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+  <h1 class="mb-3">Dyspozycyjność</h1>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for cat, msg in messages %}
+        <div class="alert alert-{{cat}}">{{msg}}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <form action="{{ url_for('add') }}" method="post" class="row g-2 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label">Data</label>
+          <input type="date" name="date" class="form-control" required>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Start</label>
+          <input type="time" name="start" class="form-control" required>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Koniec</label>
+          <input type="time" name="end" class="form-control" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Notatka</label>
+          <input type="text" name="note" class="form-control" placeholder="np. preferencje">
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-primary w-100">Dodaj</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <!-- fixed: use the correct endpoint name 'export_csv' -->
+    <a href="{{ url_for('export_csv') }}" class="btn btn-outline-secondary">Pobierz CSV</a>
+  </div>
+
+  <table class="table table-striped bg-white">
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Start</th>
+        <th>Koniec</th>
+        <th>Notatka</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+        <tr>
+          <td>{{ r['date'] }}</td>
+          <td>{{ r['start_time'] }}</td>
+          <td>{{ r['end_time'] }}</td>
+          <td>{{ r['note'] }}</td>
+          <td>
+            <form action="{{ url_for('delete', row_id=r['id']) }}" method="post" style="display:inline">
+              <button class="btn btn-sm btn-danger">Usuń</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5" class="text-center">Brak zapisanych dyspozycyjności</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="card mt-4">
+    <div class="card-body">
+      <h5>Wyślij do pracodawcy</h5>
+      <form action="{{ url_for('send') }}" method="post" class="row g-2">
+        <div class="col-md-4">
+          <label class="form-label">E-mail odbiorcy</label>
+          <input type="email" name="to_email" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Temat</label>
+          <input type="text" name="subject" class="form-control">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Wiadomość</label>
+          <input type="text" name="message" class="form-control">
+        </div>
+        <div class="col-12 mt-2">
+          <button class="btn btn-success">Wyślij e-mail</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="mt-4 text-muted small">
+    <p>Ustawienia SMTP: możesz dodać plik <code>config.json</code> lub ustawić zmienne środowiskowe SMTP_* (np. SMTP_HOST).</p>
+  </div>
+</div>
+</body>
+</html>
